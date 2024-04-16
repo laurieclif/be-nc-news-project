@@ -25,5 +25,8 @@
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves an article object with the correct properties when given a valid article_id number"
   }
 }

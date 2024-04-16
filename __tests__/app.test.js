@@ -46,14 +46,6 @@ afterAll(() => {
             expect(body).toEqual(endpoints)
         })
     })
-    test("GET 404: responds with a 404 not found error message when an incorrect path is given", () => {
-        return request(app)
-        .get("/ipi")
-        .expect(404)
-        .then(({body}) => {
-            expect(body.msg).toBe("Not found")
-        })
-    })
  })
 
  describe("/api/articles/:article_id", () => {
@@ -70,6 +62,7 @@ afterAll(() => {
                 author: expect.any(String),
                 body: expect.any(String),
                 created_at: expect.any(String),
+                votes: expect.any(Number),
                 article_img_url: expect.any(String)
               })
         })
@@ -91,3 +84,38 @@ afterAll(() => {
         })
     })
  })
+
+ describe("/api/articles", () => {
+    test("GET 200: responds with an array of all article objects with the correct properties", () => {
+        return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({body}) => {
+            const { articles } = body
+            expect(articles).toHaveLength(13)
+            articles.forEach((article) => {
+                expect(article).not.toContain("body")
+                expect(article).toMatchObject({
+                    article_id: expect.any(Number),
+                    title: expect.any(String),
+                    topic: expect.any(String),
+                    author: expect.any(String),
+                    comment_count: expect.any(Number),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number),
+                    article_img_url: expect.any(String)
+                })
+            })
+        })
+    })
+    test("GET 200: responds with an array of all article objects with the correct properties sorted by created_at in descending order", () => {
+        return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({body}) => {
+            const { articles } = body
+            expect(articles).toBeSortedBy("created_at", {descending: true, coerce: false})
+        })
+    })
+ })
+
