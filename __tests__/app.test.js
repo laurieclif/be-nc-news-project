@@ -119,3 +119,92 @@ afterAll(() => {
     })
  })
 
+ describe("/api/articles/:article_id/comments", () => {
+    test("GET 200: responds with an array of comments with the correct properties for the given article_id", () => {
+        return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({body}) => {
+            const { comments } = body
+            expect(comments).toHaveLength(11)
+            comments.forEach((comment) => {
+                expect(comment).toMatchObject({
+                    "comment_id": expect.any(Number),
+                    "votes": expect.any(Number),
+                    "created_at": expect.any(String),
+                    "author": expect.any(String),
+                    "body": expect.any(String),
+                    "article_id": 1
+                })
+            })
+        })
+    })
+    test("GET 200: responds with an array of comments with the given article_id, sorted by created_at in descending order ", () => {
+        return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({body}) => {
+            const { comments } = body
+            expect(comments).toBeSortedBy("created_at", {descending: true, coerce: false})
+        })
+    })
+    test("GET 200: responds with an empty array of comments if the article_id is valid but there are no comments on the article", () => {
+        return request(app)
+        .get("/api/articles/10/comments")
+        .expect(200)
+        .then(({body}) => {
+            const { comments } = body
+            expect(comments).toHaveLength(0)
+        })
+    })
+    test("GET 400: responds with a 400 bad request error when given a path with the wrong format", () => {
+        return request(app)
+        .get("/api/articles/one/comments")
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe("Invalid path")
+        })
+    })
+ })
+
+ describe("/api/articles/:article_id/comments", () => {
+    test("POST 201: responds with the posted comment when given an object with the correct properties", () => {
+        const newComment = {
+            author: "butter_bridge",
+            body: "super mario"
+        }
+        return request(app)
+        .post("/api/articles/2/comments")
+        .send(newComment)
+        .expect(201)
+        .then(({body}) => {
+            const { comment } = body
+            expect(comment.author).toBe("butter_bridge")
+            expect(comment.body).toBe("super mario")
+            expect(comment.article_id).toBe(2)
+        })
+    })
+    test("POST 400: responds with a 400 bad request error when given a comment body with incorrect column name and incorrect datatype", () => {
+        const newComment = {
+            aaauthor: true,
+            booody: 345
+        }
+        return request(app)
+        .post("/api/articles/2/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe("Not null violation")
+    })
+ })
+    test("POST 400: responds with a 400 bad request error when given an empty object as a comment", () => {
+        const newComment = {}
+        return request(app)
+        .post("/api/articles/2/comments")
+        .send(newComment)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe("Not null violation")
+        })
+    })
+})
