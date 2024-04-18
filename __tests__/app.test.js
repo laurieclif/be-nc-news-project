@@ -4,6 +4,7 @@ const request = require("supertest")
 const seed = require("../db/seeds/seed.js")
 const data = require("../db/data/test-data")
 const endpoints = require("../endpoints.json")
+const bodyParser = require("body-parser")
 
 
 beforeEach(() => {
@@ -205,6 +206,30 @@ afterAll(() => {
         .expect(400)
         .then(({body}) => {
             expect(body.msg).toBe("Not null violation")
+        })
+    })
+})
+
+describe("/api/articles/:article_id", () => {
+    test("PATCH 200: responds with the updated article with votes incremented when passed an inc_votes object and the article_id of the article to update", () => {
+        const incrementVotes = { inc_votes : 3 }
+        return request(app)
+        .patch("/api/articles/1")
+        .send(incrementVotes)
+        .expect(200)
+        .then(({body}) => {
+            const { updatedArticle } = body
+            expect(updatedArticle).toMatchObject({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: expect.any(String),
+                votes: 103,
+                article_img_url:
+                  "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+              })
         })
     })
 })
