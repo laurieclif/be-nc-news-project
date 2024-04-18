@@ -1,3 +1,4 @@
+const { error } = require("console")
 const db = require("../db/connection.js")
 
 const fetchCommentsByArticleId = (article_id) => {
@@ -18,4 +19,10 @@ const insertCommentByArticleId = (article_id, newComment) => {
     })
 }
 
-module.exports = { fetchCommentsByArticleId, insertCommentByArticleId }
+const removeCommentByCommentId = (comment_id) => {
+    return db.query(`DELETE FROM comments WHERE comment_id = $1;`, [comment_id])
+    .then(({rows}) => {
+    })
+}
+
+module.exports = { fetchCommentsByArticleId, insertCommentByArticleId, removeCommentByCommentId }

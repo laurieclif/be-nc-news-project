@@ -284,3 +284,19 @@ describe("/api/articles/:article_id", () => {
         })
     })
 })
+
+describe("/api/comments/:comment_id", () => {
+    test("DELETE 204: responds with no content demonstrating the deleted comment when given a comment_id to delete", () => {
+        return request(app)
+        .delete("/api/comments/5")
+        .expect(204)
+    })
+    test("DELETE 400: responds with a 400 bad request error when given an invalid comment_id", () => {
+        return request(app)
+        .delete("/api/comments/secondcomment")
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe("Invalid path")
+        })
+    })
+})
