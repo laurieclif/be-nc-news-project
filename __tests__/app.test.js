@@ -232,4 +232,55 @@ describe("/api/articles/:article_id", () => {
               })
         })
     })
+    test("PATCH 200: responds with the updated article with votes decremented when passed an inc_votes object with a negative number and the article_id of the article to update", () => {
+        const decrementVotes = { inc_votes : -20 }
+        return request(app)
+        .patch("/api/articles/1")
+        .send(decrementVotes)
+        .expect(200)
+        .then(({body}) => {
+            const { updatedArticle } = body
+            expect(updatedArticle).toMatchObject({
+                article_id: 1,
+                title: "Living in the shadow of a great man",
+                topic: "mitch",
+                author: "butter_bridge",
+                body: "I find this existence challenging",
+                created_at: expect.any(String),
+                votes: 80,
+                article_img_url:
+                  "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+              })
+        })
+    })
+    test("PATCH 400: responds with a 400 bad request error when given an incrementVotes body with incorrect property name and incorrect datatype", () => {
+        const incrementVotes = { inc_votez : "eleven" }
+        return request(app)
+        .patch("/api/articles/1")
+        .send(incrementVotes)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe("Not null violation")
+        })
+    })
+    test("PATCH 400: responds with a 400 bad request error when given an empty incrementVotes body", () => {
+        const incrementVotes = {}
+        return request(app)
+        .patch("/api/articles/1")
+        .send(incrementVotes)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe("Not null violation")
+        })
+    })
+    test("PATCH 400: responds with a 400 bad request error when given an invalid article_id in the path", () => {
+        const incrementVotes = { inc_votes : 3 }
+        return request(app)
+        .patch("/api/articles/invalid")
+        .send(incrementVotes)
+        .expect(400)
+        .then(({body}) => {
+            expect(body.msg).toBe("Invalid path")
+        })
+    })
 })
