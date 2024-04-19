@@ -25,5 +25,20 @@
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves an article object with the correct properties when given a valid article_id number"
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array of comments for the article specified with the article_id"
+  },
+  "POST: /api/articles/:article_id/comments": {
+    "description": "serves the new comment object with the correct properties"
+  },
+  "PATCH: /api/articles/:article_id": {
+    "description": "serves an updated article with votes incremented by the value given in the inc_votes object"
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "serves no content, deletes the comment specified by comment_id"
   }
 }

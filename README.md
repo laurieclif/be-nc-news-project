@@ -1,15 +1,12 @@
 # Northcoders News API
 
-what files a developer must add in order to successfully connect to the two databases locally
-In order to run this project locally, you will need to create:
-
-- A .env.test file, with PGDATABASE = nc_news_test
-- A .env.development file, with PGDATABASE = nc_news
-
-dependencies:
+In order to run this project locally:
+- please git clone https://github.com/laurieclif/be-nc-news-project/tree/main
+- create a .env.test file, with PGDATABASE=nc_news_test
+- create a .env.development file, with PGDATABASE=nc_news
+- npm install:
 - express
 - postgres
-
-dev dependencies:
 - supertest
 - jest
+- jest-sorted
