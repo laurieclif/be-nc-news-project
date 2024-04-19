@@ -118,6 +118,43 @@ afterAll(() => {
             expect(articles).toBeSortedBy("created_at", {descending: true, coerce: false})
         })
     })
+    test("GET 200: responds with an array of article objects, each with the correct properties and filtered by the topic queried", () => {
+        return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then(({body}) => {
+            const { articles } = body
+            expect(articles).toHaveLength(12)
+            articles.forEach((article) => {
+                expect(article).toMatchObject({
+                    article_id: expect.any(Number),
+                    title: expect.any(String),
+                    topic: "mitch",
+                    author: expect.any(String),
+                    created_at: expect.any(String),
+                    votes: expect.any(Number),
+                    article_img_url: expect.any(String)
+                  })
+            })
+        })
+    })
+    test("GET 200: responds with an empty array when given a valid topic to filter by, but there are no associated articles", () => {
+        return request(app)
+        .get("/api/articles?topic=paper")
+        .expect(200)
+        .then(({body}) => {
+            const { articles } = body
+            expect(articles).toHaveLength(0)
+        })
+    })
+    // test("GET 400: responds with a 400 bad request error when queried with a topic which doesn't exist", () => {
+    //     return request(app)
+    //     .get("/api/articles?topic=invalid")
+    //     .expect(400)
+    //     .then(({body}) => {
+    //         expect(body.msg).toBe("Invalid path")
+    //     })
+    // })
  })
 
  describe("/api/articles/:article_id/comments", () => {
@@ -316,6 +353,5 @@ describe("/api/users", () => {
                  })
             })
         })
-    })
-    
+    }) 
 })
