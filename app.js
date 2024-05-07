@@ -6,6 +6,9 @@ const { getArticles, getArticleById, patchArticleByArticleId } = require("./cont
 const { getCommentsByArticleId, postCommentByArticleId, deleteCommentByCommentId } = require("./controllers/comments.controllers.js")
 const { getUsers } = require("./controllers/users.controllers.js")
 const { handlePathNotFoundErrors, handleCustomErrors, handlePsqlPathErrors, handlePsqlInputErrors, handleServerErrors } = require("./errors/index.js")
+const cors = require('cors')
+
+app.use(cors())
 
 app.use(express.json())
 
